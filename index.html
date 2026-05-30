@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spice Kitchen</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF8F2; --surface:#FFFFFF; --surface2:#FFF3E8; --surface3:#FFE8CC;
+  --border:rgba(0,0,0,0.07); --border2:rgba(255,107,26,0.2);
+  --orange:#FF6B1A; --orange-light:#FF8C42; --orange-dim:rgba(255,107,26,0.1);
+  --pink:#FF4080; --pink-dim:rgba(255,64,128,0.1);
+  --gold:#FFB830; --gold-dim:rgba(255,184,48,0.12);
+  --dark:#2A1200; --text:#3A2010; --text-mid:#8A6040; --text-dim:#C4A080;
+  --shadow:rgba(255,107,26,0.1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;}
+.header{background:#fff;border-bottom:2px solid var(--border2);padding:0 20px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;height:68px;box-shadow:0 2px 16px var(--shadow);}
+.logo-area{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.logo-img{height:52px;width:52px;object-fit:contain;border-radius:10px;}
+.logo-text-area{display:flex;flex-direction:column;}
+.logo-brand{font-family:'Pacifico',cursive;font-size:1.1rem;background:linear-gradient(135deg,#FF6B1A,#FF4080,#FFB830);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+.logo-sub{font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--text-dim);}
+.nav{display:flex;gap:4px;}
+.nav-btn{background:none;border:1px solid transparent;color:var(--text-mid);font-family:'Nunito',sans-serif;font-size:0.8rem;font-weight:700;padding:8px 14px;border-radius:20px;cursor:pointer;transition:all 0.2s;}
+.nav-btn:hover{background:var(--orange-dim);color:var(--orange);border-color:var(--border2);}
+.nav-btn.active{background:var(--orange);color:#fff;border-color:var(--orange);}
+.settings-btn{background:none;border:1px solid var(--border2);color:var(--text-dim);padding:7px 11px;border-radius:20px;cursor:pointer;font-size:0.9rem;transition:all 0.2s;}
+.settings-btn:hover{border-color:var(--orange);color:var(--orange);}
+.main{max-width:1100px;margin:0 auto;padding:28px 20px;}
+.view{display:none;}.view.active{display:block;}
+/* PLANNER */
+.planner-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;}
+.week-nav{display:flex;align-items:center;gap:12px;}
+.week-arrow{background:#fff;border:1px solid var(--border2);color:var(--orange);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;transition:all 0.2s;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px var(--shadow);}
+.week-arrow:hover{background:var(--orange);color:#fff;}
+.week-label{font-size:1rem;font-weight:800;color:var(--text);min-width:190px;text-align:center;}
+.planner-grid{background:var(--border2);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:88px repeat(7,1fr);gap:1px;box-shadow:0 4px 20px var(--shadow);}
+.cell{background:#fff;padding:8px;min-height:78px;}
+.cell-head{background:var(--surface2);min-height:auto;padding:10px 8px;text-align:center;}
+.day-name{font-size:0.65rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--orange);}
+.day-date{font-size:0.6rem;color:var(--text-dim);margin-top:2px;}
+.meal-row-label{display:flex;align-items:center;justify-content:center;font-size:0.58rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);min-height:78px;}
+.meal-cell{transition:background 0.15s;}.meal-cell:hover{background:var(--surface2);}
+.meal-tag{border-radius:8px;padding:4px 7px;font-size:0.64rem;font-weight:700;line-height:1.3;cursor:pointer;position:relative;display:inline-block;max-width:100%;word-break:break-word;}
+.tag-caribbean{background:rgba(0,188,212,0.1);border:1px solid rgba(0,188,212,0.3);color:#0097A7;}
+.tag-southern{background:rgba(244,67,54,0.08);border:1px solid rgba(244,67,54,0.25);color:#C62828;}
+.tag-westaf{background:rgba(255,152,0,0.1);border:1px solid rgba(255,152,0,0.3);color:#E65100;}
+.tag-asian{background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.3);color:#2E7D32;}
+.tag-street{background:rgba(156,39,176,0.1);border:1px solid rgba(156,39,176,0.25);color:#6A1B9A;}
+.tag-sides{background:rgba(255,107,26,0.1);border:1px solid rgba(255,107,26,0.25);color:#BF360C;}
+.tag-breakfast{background:rgba(255,184,48,0.12);border:1px solid rgba(255,184,48,0.35);color:#F57F17;}
+.tag-kids{background:rgba(33,150,243,0.1);border:1px solid rgba(33,150,243,0.25);color:#1565C0;}
+.tag-nyc{background:rgba(255,64,128,0.1);border:1px solid rgba(255,64,128,0.25);color:#AD1457;}
+.remove-tag{position:absolute;top:-6px;right:-6px;width:15px;height:15px;background:#FF4080;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;cursor:pointer;z-index:5;}
+.meal-tag:hover .remove-tag{display:flex;}
+.add-btn{width:22px;height:22px;border-radius:6px;border:1px dashed var(--text-dim);background:none;color:var(--text-dim);cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-top:4px;}
+.add-btn:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-dim);}
+/* RECIPES */
+.toolbar{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap;align-items:center;}
+.search-input{flex:1;min-width:180px;background:#fff;border:1px solid var(--border2);border-radius:24px;padding:10px 18px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.85rem;outline:none;transition:border-color 0.2s;box-shadow:0 2px 8px var(--shadow);}
+.search-input::placeholder{color:var(--text-dim);}
+.search-input:focus{border-color:var(--orange);}
+.filter-sel{background:#fff;border:1px solid var(--border2);border-radius:24px;padding:10px 16px;color:var(--text-mid);font-family:'Nunito',sans-serif;font-size:0.8rem;outline:none;cursor:pointer;box-shadow:0 2px 8px var(--shadow);}
+.add-recipe-btn{background:linear-gradient(135deg,var(--orange),var(--pink));color:#fff;border:none;padding:10px 18px;border-radius:24px;font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;transition:opacity 0.2s;white-space:nowrap;box-shadow:0 4px 12px var(--shadow);}
+.add-recipe-btn:hover{opacity:0.88;}
+.recipes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.recipe-card{background:#fff;border:1px solid var(--border2);border-radius:14px;padding:18px;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 10px var(--shadow);}
+.recipe-card:hover{border-color:var(--orange);transform:translateY(-2px);box-shadow:0 8px 24px var(--shadow);}
+.cat-badge{font-size:0.58rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;padding:3px 9px;border-radius:20px;display:inline-block;margin-bottom:10px;}
+.badge-caribbean{background:rgba(0,188,212,0.1);color:#0097A7;}
+.badge-southern{background:rgba(244,67,54,0.08);color:#C62828;}
+.badge-westaf{background:rgba(255,152,0,0.1);color:#E65100;}
+.badge-asian{background:rgba(76,175,80,0.1);color:#2E7D32;}
+.badge-street{background:rgba(156,39,176,0.1);color:#6A1B9A;}
+.badge-sides{background:rgba(255,107,26,0.1);color:#BF360C;}
+.badge-breakfast{background:rgba(255,184,48,0.12);color:#F57F17;}
+.badge-kids{background:rgba(33,150,243,0.1);color:#1565C0;}
+.badge-nyc{background:rgba(255,64,128,0.1);color:#AD1457;}
+.card-name{font-size:0.95rem;font-weight:800;color:var(--dark);margin-bottom:8px;line-height:1.25;}
+.card-meta{font-size:0.72rem;color:var(--text-dim);display:flex;gap:10px;}
+.card-actions{display:flex;gap:6px;margin-top:12px;}
+.card-edit-btn,.card-del-btn{font-size:0.68rem;font-weight:700;padding:4px 10px;border-radius:12px;border:none;cursor:pointer;transition:all 0.2s;}
+.card-edit-btn{background:var(--orange-dim);color:var(--orange);}
+.card-edit-btn:hover{background:var(--orange);color:#fff;}
+.card-del-btn{background:rgba(255,64,128,0.1);color:var(--pink);}
+.card-del-btn:hover{background:var(--pink);color:#fff;}
+.nyc-badge{display:inline-flex;align-items:center;font-size:0.55rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--pink);background:var(--pink-dim);padding:2px 6px;border-radius:8px;margin-left:5px;vertical-align:middle;}
+/* SHOPPING */
+.shop-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.shop-title{font-size:1.5rem;font-weight:800;color:var(--dark);}
+.gen-btn{background:linear-gradient(135deg,var(--orange),var(--gold));color:#fff;border:none;padding:11px 22px;border-radius:24px;font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:800;cursor:pointer;transition:opacity 0.2s;box-shadow:0 4px 12px var(--shadow);}
+.gen-btn:hover{opacity:0.88;}
+.shop-cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;}
+.shop-cat{background:#fff;border:1px solid var(--border2);border-radius:14px;padding:18px;box-shadow:0 2px 10px var(--shadow);}
+.shop-cat-title{font-size:0.62rem;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--orange);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border2);}
+.shop-item{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.82rem;color:var(--text-mid);}
+.shop-item input{accent-color:var(--orange);cursor:pointer;}
+.shop-item.done{text-decoration:line-through;color:var(--text-dim);}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-dim);}
+.empty-state .emoji{font-size:2.5rem;margin-bottom:12px;}
+.empty-state p{font-size:1rem;font-weight:700;color:var(--text-mid);margin-bottom:6px;}
+/* MODALS */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.overlay.open{display:flex;}
+.modal{background:#fff;border:1px solid var(--border2);border-radius:20px;width:100%;max-width:540px;max-height:88vh;overflow-y:auto;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
+.modal-title{font-size:1.25rem;font-weight:800;color:var(--dark);line-height:1.2;}
+.modal-close{background:none;border:none;color:var(--text-dim);font-size:1.3rem;cursor:pointer;padding:2px 8px;border-radius:6px;transition:all 0.2s;flex-shrink:0;}
+.modal-close:hover{background:var(--surface2);color:var(--text);}
+.lbl{font-size:0.62rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--orange);display:block;margin-bottom:6px;}
+.fg{margin-bottom:16px;}
+.finput,.fsel,.ftarea{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.85rem;outline:none;transition:border-color 0.2s;}
+.finput:focus,.fsel:focus,.ftarea:focus{border-color:var(--orange);}
+.ftarea{min-height:90px;resize:vertical;line-height:1.5;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;}
+.btn-cancel{background:none;border:1px solid var(--border2);color:var(--text-mid);padding:10px 18px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-cancel:hover{border-color:var(--text-mid);color:var(--text);}
+.btn-save{background:linear-gradient(135deg,var(--orange),var(--pink));color:#fff;border:none;padding:10px 22px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;transition:opacity 0.2s;}
+.btn-save:hover{opacity:0.88;}
+/* DETAIL */
+.detail-ing h4,.detail-steps h4{font-size:0.62rem;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--orange);margin-bottom:10px;}
+.ing-list{list-style:none;}
+.ing-list li{font-size:0.82rem;color:var(--text-mid);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;}
+.ing-list li::before{content:"🌶";font-size:0.6rem;flex-shrink:0;margin-top:3px;}
+.steps-list{list-style:none;counter-reset:s;}
+.steps-list li{font-size:0.82rem;color:var(--text-mid);padding:8px 0;border-bottom:1px solid var(--border);counter-increment:s;display:flex;gap:12px;line-height:1.55;}
+.steps-list li::before{content:counter(s);color:var(--orange);font-weight:800;font-size:0.9rem;flex-shrink:0;min-width:16px;}
+.recipe-note{margin-top:16px;padding:12px 16px;background:var(--surface2);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;font-size:0.78rem;color:var(--text-mid);font-style:italic;line-height:1.5;}
+/* ASSIGN */
+.assign-srch{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.85rem;outline:none;margin-bottom:12px;}
+.assign-srch:focus{border-color:var(--orange);}
+.assign-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.af-btn{background:var(--bg);border:1px solid var(--border);color:var(--text-dim);padding:4px 12px;border-radius:20px;font-size:0.68rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.af-btn.active,.af-btn:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-dim);}
+.assign-list{max-height:380px;overflow-y:auto;}
+.assign-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.assign-name{font-size:0.88rem;font-weight:700;color:var(--dark);}
+.assign-sub{font-size:0.68rem;color:var(--text-dim);margin-top:2px;}
+.assign-add{background:var(--orange-dim);border:1px solid var(--border2);color:var(--orange);padding:5px 12px;border-radius:16px;font-size:0.72rem;font-weight:800;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.assign-add:hover{background:var(--orange);color:#fff;}
+.slot-info{font-size:0.7rem;color:var(--text-dim);margin-bottom:14px;font-weight:600;}
+.slot-info strong{color:var(--orange-light);}
+/* SETTINGS */
+.lock-notice{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;font-size:0.82rem;color:var(--text-mid);text-align:center;margin-bottom:16px;}
+.settings-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border2);}
+.settings-section:last-child{border-bottom:none;}
+.settings-note{font-size:0.75rem;color:var(--text-dim);margin-top:6px;font-style:italic;}
+.preview-logo{height:60px;margin-top:10px;border-radius:8px;display:none;}
+@media(max-width:680px){
+  .planner-grid{grid-template-columns:54px repeat(7,1fr);}
+  .cell{padding:5px;min-height:60px;}
+  .meal-row-label{font-size:0.5rem;min-height:60px;}
+  .recipes-grid{grid-template-columns:1fr 1fr;}
+  .frow{grid-template-columns:1fr;}
+}
+@media(max-width:480px){
+  .recipes-grid{grid-template-columns:1fr;}
+  .nav-btn{padding:7px 9px;font-size:0.72rem;}
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo-area" onclick="showView('planner',document.querySelector('.nav-btn'))">
+    <img class="logo-img" id="header-logo" src="data:image/png;base64,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" alt="Spice Kitchen">
+    <div class="logo-text-area">
+      <div class="logo-brand" id="header-brand">Spice Kitchen</div>
+      <span class="logo-sub" id="header-tagline">New York City</span>
+    </div>
+  </div>
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showView('planner',this)">📅 Planner</button>
+    <button class="nav-btn" onclick="showView('recipes',this)">🍽 Recipes</button>
+    <button class="nav-btn" onclick="showView('shopping',this)">🛒 Shopping</button>
+    <button class="settings-btn" onclick="openSettings()">⚙️</button>
+  </nav>
+</header>
+<div class="main">
+  <div id="view-planner" class="view active">
+    <div class="planner-top">
+      <div class="week-nav">
+        <button class="week-arrow" onclick="changeWeek(-1)">←</button>
+        <div class="week-label" id="week-label"></div>
+        <button class="week-arrow" onclick="changeWeek(1)">→</button>
+      </div>
+    </div>
+    <div class="planner-grid" id="planner-grid"></div>
+  </div>
+  <div id="view-recipes" class="view">
+    <div class="toolbar">
+      <input class="search-input" placeholder="🔍 Search by name or ingredient..." oninput="filterRecipes()" id="rsearch">
+      <select class="filter-sel" onchange="filterRecipes()" id="rcat">
+        <option value="">All Categories</option>
+        <option value="caribbean">🌴 Caribbean</option>
+        <option value="southern">🍗 Southern Comfort</option>
+        <option value="westaf">🌍 West African</option>
+        <option value="asian">🥢 Asian</option>
+        <option value="street">🌮 Street Food & Snacks</option>
+        <option value="sides">🥣 Sauces & Sides</option>
+        <option value="breakfast">🌅 Breakfast</option>
+        <option value="kids">⭐ Kid Friendly</option>
+        <option value="nyc">🗽 NYC Copycats</option>
+      </select>
+      <select class="filter-sel" onchange="filterRecipes()" id="rtime">
+        <option value="">⏱ Any Time</option>
+        <option value="quick">Under 30 min</option>
+        <option value="medium">30–60 min</option>
+        <option value="long">60+ min</option>
+      </select>
+      <button class="add-recipe-btn" onclick="openAdd()">+ Add Recipe</button>
+    </div>
+    <div class="recipes-grid" id="recipes-grid"></div>
+  </div>
+  <div id="view-shopping" class="view">
+    <div class="shop-top">
+      <div class="shop-title">🛒 Shopping List</div>
+      <button class="gen-btn" onclick="genShopping()">Generate from This Week</button>
+    </div>
+    <div id="shop-content"><div class="empty-state"><div class="emoji">🛒</div><p>Your list is empty</p><span>Plan your week first, then generate your list</span></div></div>
+  </div>
+</div>
+
+<!-- ASSIGN MODAL -->
+<div class="overlay" id="assign-overlay">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Add to Planner</div><button class="modal-close" onclick="closeAssign()">✕</button></div>
+    <div class="slot-info" id="slot-info"></div>
+    <input class="assign-srch" placeholder="Search recipes..." oninput="renderAssignList()" id="asrch">
+    <div class="assign-filters" id="afilters"></div>
+    <div class="assign-list" id="alist"></div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="overlay" id="detail-overlay">
+  <div class="modal">
+    <div class="modal-head"><div id="detail-title" class="modal-title"></div><button class="modal-close" onclick="closeDetail()">✕</button></div>
+    <div id="detail-body"></div>
+  </div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="overlay" id="add-overlay">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" id="add-title">✨ Add New Recipe</div><button class="modal-close" onclick="closeAdd()">✕</button></div>
+    <div class="fg"><label class="lbl">Recipe Name</label><input class="finput" id="nn" placeholder="e.g. Coconut Lobster Bisque"></div>
+    <div class="frow">
+      <div class="fg"><label class="lbl">Category</label>
+        <select class="fsel" id="nc">
+          <option value="caribbean">Caribbean</option><option value="southern">Southern Comfort</option>
+          <option value="westaf">West African</option><option value="asian">Asian</option>
+          <option value="street">Street Food & Snacks</option><option value="sides">Sauces & Sides</option>
+          <option value="breakfast">Breakfast</option><option value="kids">Kid Friendly</option>
+          <option value="nyc">NYC Copycats</option>
+        </select>
+      </div>
+      <div class="fg"><label class="lbl">Cook Time</label>
+        <select class="fsel" id="nt">
+          <option value="quick">Under 30 min</option><option value="medium">30–60 min</option><option value="long">60+ min</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label class="lbl">Ingredients (one per line)</label><textarea class="ftarea" id="ni" placeholder="1 can coconut milk&#10;2 lobster tails&#10;..."></textarea></div>
+    <div class="fg"><label class="lbl">Instructions (one step per line)</label><textarea class="ftarea" id="ns" placeholder="Season the lobster...&#10;Build the sauce..."></textarea></div>
+    <div class="fg"><label class="lbl">Notes (optional)</label><input class="finput" id="nnote" placeholder="e.g. Inspired by Rosa's at Park, The Bronx"></div>
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeAdd()">Cancel</button><button class="btn-save" id="add-save-btn" onclick="saveRecipe()">Save Recipe</button></div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="overlay" id="settings-overlay">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">⚙️ Settings</div><button class="modal-close" onclick="closeSettings()">✕</button></div>
+    <div id="settings-lock">
+      <div class="lock-notice">🔒 Brand settings are password protected.<br>Only you can edit these.</div>
+      <div class="fg"><label class="lbl">Password</label><input class="finput" type="password" id="spw" placeholder="Enter your password" onkeydown="if(event.key==='Enter')checkPw()"></div>
+      <div class="modal-actions"><button class="btn-cancel" onclick="closeSettings()">Cancel</button><button class="btn-save" onclick="checkPw()">Unlock</button></div>
+    </div>
+    <div id="settings-panel" style="display:none;">
+      <div class="settings-section">
+        <div class="fg"><label class="lbl">Brand Name</label><input class="finput" id="s-brand" placeholder="Spice Kitchen"></div>
+        <div class="fg"><label class="lbl">Tagline</label><input class="finput" id="s-tagline" placeholder="New York City"></div>
+      </div>
+      <div class="settings-section">
+        <label class="lbl">Logo Image</label>
+        <p class="settings-note">Upload a new logo — square PNG works best</p>
+        <input type="file" id="s-logo" accept="image/*" onchange="previewLogo(this)" style="margin-top:10px;">
+        <img id="s-logo-prev" class="preview-logo">
+      </div>
+      <div class="settings-section">
+        <label class="lbl">Change Password</label>
+        <div class="frow">
+          <div class="fg"><input class="finput" type="password" id="s-pw1" placeholder="New password"></div>
+          <div class="fg"><input class="finput" type="password" id="s-pw2" placeholder="Confirm password"></div>
+        </div>
+        <p class="settings-note">Leave blank to keep current password</p>
+      </div>
+      <div class="modal-actions"><button class="btn-cancel" onclick="closeSettings()">Cancel</button><button class="btn-save" onclick="saveSettings()">Save Changes</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATS={caribbean:"Caribbean",southern:"Southern Comfort",westaf:"West African",asian:"Asian",street:"Street Food & Snacks",sides:"Sauces & Sides",breakfast:"Breakfast",kids:"Kid Friendly",nyc:"NYC Copycat"};
+const DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const MEALS=["breakfast","lunch","dinner","snack"];
+let weekOffset=0,assignSlot=null,assignCat="",editingId=null;
+let plan=JSON.parse(localStorage.getItem("sk3-plan")||"{}");
+let custom=JSON.parse(localStorage.getItem("sk3-custom")||"[]");
+let settings=JSON.parse(localStorage.getItem("sk3-settings")||'{"pw":"spicekitchen","brand":"Spice Kitchen","tagline":"New York City","logo":""}');
+
+const RECIPES=[
+{id:"r1",name:"Coconut Rice",cat:"caribbean",time:"medium",ingredients:["2 cups jasmine rice","1 can (13.5oz) full-fat coconut milk","1 cup water","1 tsp salt","1 tsp sugar","2 tbsp butter","3 garlic cloves, minced"],steps:["Rinse rice until water runs clear.","Melt butter in pot, sauté garlic 1 min.","Add coconut milk, water, salt, sugar. Bring to boil.","Add rice, stir once, cover, reduce to very low. Cook 18–20 min.","Fluff and serve."]},
+{id:"r2",name:"Jerk Salmon — Grilled",cat:"caribbean",time:"medium",ingredients:["5 salmon fillets","3 tbsp jerk seasoning","2 tbsp olive oil","2 tbsp soy sauce","1 tbsp brown sugar","Juice of 1 lime","3 garlic cloves, minced","1 tsp fresh thyme"],steps:["Mix all marinade ingredients. Coat salmon. Marinate 30 min minimum.","Grill medium-high 4–5 min per side until caramelized.","Serve with coconut rice and plantains."]},
+{id:"r3",name:"Jerk Salmon — Stovetop",cat:"caribbean",time:"medium",ingredients:["5 salmon fillets","3 tbsp jerk seasoning","2 tbsp olive oil","2 tbsp soy sauce","1 tbsp brown sugar","Juice of 1 lime","3 garlic cloves, minced"],steps:["Marinate salmon 30 min minimum.","Heat heavy skillet over medium-high.","Cook 4–5 min per side until caramelized. Rest 2 min."]},
+{id:"r4",name:"Jerk Chicken — Grilled",cat:"caribbean",time:"long",ingredients:["5 chicken thighs and drumsticks","4 tbsp jerk seasoning","3 tbsp soy sauce","2 tbsp olive oil","1 tbsp brown sugar","Juice of 1 lime","4 garlic cloves","1 tsp allspice","Fresh thyme"],steps:["Score chicken. Mix all marinade. Coat and marinate overnight.","Grill medium heat 35–45 min turning occasionally until juices run clear and skin is charred.","Rest 5 min before serving."]},
+{id:"r5",name:"Tostones (Fried Green Plantains)",cat:"caribbean",time:"quick",ingredients:["3 green plantains","Vegetable oil for frying","Salt to taste"],steps:["Peel and cut plantains into 1-inch rounds.","Fry in 350°F oil 3–4 min until golden but not crispy.","Smash each piece flat. Fry again 2–3 min until crispy. Season immediately."]},
+{id:"r6",name:"Maduros (Sweet Fried Plantains)",cat:"caribbean",time:"quick",ingredients:["3 very ripe plantains (yellow-black)","2 tbsp butter or oil","Pinch of salt"],steps:["Peel and slice diagonally ½ inch thick.","Heat butter over medium. Cook 2–3 min per side until golden and caramelized.","Serve immediately."]},
+{id:"r7",name:"Pollo Guisado (Dominican Stewed Chicken)",cat:"caribbean",time:"long",ingredients:["5 chicken thighs, skin-on","1 can tomato sauce","1 onion, diced","1 green bell pepper, diced","4 garlic cloves, minced","2 tbsp sofrito","1 packet Sazón","1 tsp dried oregano","Green olives and capers","Adobo seasoning","2 tbsp olive oil"],steps:["Season chicken with adobo, sazón, oregano. Marinate 30 min.","Brown chicken in hot oil in a heavy pot. Remove.","Sauté onion, pepper, garlic. Add sofrito, cook 2 min.","Add tomato sauce, olives, capers, ½ cup water.","Return chicken. Cover and simmer 35–40 min until very tender.","Serve with rice and beans."],note:"Pollo Guisado is the heart of Dominican cooking — stewed chicken slow-cooked in a rich tomato-sofrito sauce. Every family has their version."},
+{id:"r8",name:"White Rice & Habichuelas (Rice & Beans)",cat:"caribbean",time:"medium",ingredients:["2 cups long grain white rice","1 can red kidney beans","1 can tomato sauce","1 onion, diced","3 garlic cloves, minced","1 tbsp sofrito","1 packet Sazón","Salt, adobo, oregano","2 tbsp olive oil"],steps:["Boil 4 cups salted water, add rice, cover and simmer 18 min.","Sauté onion and garlic. Add sofrito, sazón, tomato sauce. Cook 3 min.","Add beans with liquid + ½ cup water. Season. Simmer 15–20 min until thick.","Serve beans over rice."],note:"A daily staple across the Caribbean. In Jamaica it's Rice & Peas, in the DR it's Arroz con Habichuelas. Same comfort, different island."},
+{id:"r9",name:"Moro de Guandules / Rice & Peas",cat:"caribbean",time:"medium",ingredients:["2 cups long grain rice","1 can pigeon peas (guandules), drained","1 can coconut milk","1 cup water","1 onion, diced","3 garlic cloves, minced","1 tbsp sofrito","1 packet Sazón","1 tsp dried oregano","Salt and adobo","2 tbsp olive oil"],steps:["Heat oil. Sauté onion and garlic. Add sofrito and sazón, cook 2 min.","Add pigeon peas, coconut milk, water, oregano. Season. Bring to boil.","Add rice, stir once, reduce to very low. Cover tightly. Cook 20–25 min.","Stir from bottom and serve."],note:"Moro de Guandules in the Dominican Republic, Rice & Peas in Jamaica — same dish, different island name. Pigeon peas cooked in coconut milk is a Caribbean staple that belongs on every table."},
+{id:"r10",name:"Mangú (Mashed Green Plantains)",cat:"breakfast",time:"medium",ingredients:["3 green plantains","3 tbsp butter","½ cup warm water","Salt to taste","1 red onion, sliced","1 tbsp apple cider vinegar","Oil for onions","Optional: fried eggs, sliced avocado"],steps:["Boil peeled plantains in salted water 20–25 min until very tender.","Drain. Mash with butter and warm water until smooth and creamy. Season.","Sauté sliced red onion in oil with a splash of vinegar until soft.","Serve mangú topped with onions, fried eggs, and avocado."],note:"Mangú is the most iconic Dominican breakfast — creamy mashed green plantains topped with pickled onions. Part of Los Tres Golpes (The Three Hits) — the classic Dominican breakfast trio."},
+{id:"r11",name:"Saltfish — Bacalao Guisado",cat:"caribbean",time:"long",ingredients:["1.5 lbs salted codfish (bacalao)","1 onion, sliced","1 green bell pepper, sliced","1 can tomato sauce","3 garlic cloves, minced","1 tbsp sofrito (light)","1 packet Sazón","Green olives","Olive oil","Dried oregano"],steps:["Soak codfish overnight, changing water 2–3 times to remove salt.","Shred into pieces, removing any bones.","Sauté onion, pepper, garlic. Add a little sofrito, tomato sauce, sazón, olives. Cook 5 min.","Add codfish. Simmer 15–20 min. Serve with rice, tostones, or avocado."],note:"Bacalao is salted, preserved codfish — a Caribbean staple. Called Saltfish across the English-speaking Caribbean. Always soak it well before cooking or it will be too salty."},
+{id:"r12",name:"Dominican Saltfish Breakfast with Provisions",cat:"breakfast",time:"medium",ingredients:["1 lb salted codfish, soaked and shredded","1 small onion, finely diced","½ green pepper, diced","2 garlic cloves, minced","1 Roma tomato, diced","1 tbsp sofrito (very light — just a touch)","Salt and pepper to taste","Olive oil","Provisions (optional — serve any or all):","2 green bananas, boiled","1 cup yuca (cassava), boiled or pan-fried","Sliced avocado"],steps:["Heat olive oil. Sauté onion, pepper, and garlic until soft.","Add tomato and just a touch of sofrito. Cook 2 min — keep this fresh and light.","Add shredded codfish. Cook 8–10 min. Taste before adding salt — the fish is already salty.","Green bananas: cut the ends, score the skin, boil in salted water 20 min until tender but firm.","Yuca: peel, cut into chunks, boil in salted water until tender. Serve as-is or pan-fry in olive oil until golden.","Plate saltfish with your choice of provisions and sliced avocado."],note:"Provisions are boiled ground vegetables — the foundation of a Caribbean breakfast plate. In Jamaica they serve Ackee & Saltfish with boiled green banana and dumpling. In the DR we serve bacalao with yuca and green banana. Same roots, different island."},
+{id:"r13",name:"Jamaican Saltfish & Ackee",cat:"breakfast",time:"medium",ingredients:["1 lb salted codfish, soaked and shredded","1 can ackee (or fresh if available)","1 onion, diced","1 scotch bonnet pepper, whole or minced to taste","1 stalk green onion","2 garlic cloves, minced","½ each red and green bell pepper, sliced","Fresh thyme","Black pepper","Coconut oil or vegetable oil","For provisions: 2 green bananas boiled, Jamaican dumplings (optional)"],steps:["Heat oil. Sauté onion, garlic, peppers, scotch bonnet, green onion, and thyme until fragrant.","Add shredded codfish. Stir and cook 5 min.","Gently fold in ackee — do not break it up. Cook 3–4 min until just heated through.","Season with black pepper. Taste before adding salt — the codfish brings plenty.","Serve with boiled green banana and dumplings."],note:"Ackee & Saltfish is the national dish of Jamaica. Ackee is a fruit that cooks up soft and buttery — almost egg-like. It must be fully ripe. Canned ackee from Caribbean grocery stores is safe and delicious."},
+{id:"r14",name:"Saltfish & Callaloo",cat:"breakfast",time:"medium",ingredients:["1 lb salted codfish, soaked and shredded","1 bunch callaloo (or substitute spinach or dasheen leaves)","1 onion, diced","2 garlic cloves, minced","1 scotch bonnet, kept whole","Fresh thyme","1 tomato, diced","Coconut oil","Salt and black pepper","Boiled green banana and yuca or dumpling to serve"],steps:["Heat coconut oil. Sauté onion, garlic, thyme, scotch bonnet (whole for mild heat).","Add tomato and callaloo. Cook down 5–8 min until wilted.","Add shredded codfish. Stir and cook 5 more min.","Remove scotch bonnet before serving. Season with black pepper.","Serve with boiled green banana and provisions."],note:"Callaloo is a leafy green beloved across the Caribbean — in Jamaica it's taro leaves, in Trinidad it's amaranth. Spinach is a great substitute. This breakfast shows up across the English-speaking Caribbean, often on Sunday mornings."},
+{id:"r15",name:"Bacalao, Eggs & Provisions",cat:"breakfast",time:"medium",ingredients:["1 lb salted codfish, soaked and shredded","4–5 eggs","1 small onion, diced","½ green pepper, diced","2 garlic cloves, minced","Olive oil","Salt and pepper","Boiled green banana","Boiled yuca","Sliced avocado"],steps:["Heat olive oil. Sauté onion, pepper, garlic until soft.","Add shredded codfish. Cook 5 min.","Crack eggs directly into the pan. Scramble together with the codfish until just set — keep them soft.","Serve immediately with boiled green banana, yuca, and avocado."],note:"The full Dominican provisions breakfast — bacalao scrambled with eggs, served with boiled ground provisions. Simple, filling, and deeply Caribbean."},
+{id:"r16",name:"Creole Coconut Lobster Bisque with Arepitas & Fried Yuca",cat:"caribbean",time:"medium",ingredients:["2 lobster tails or 1 lb lobster chunks","1 can (13.5oz) full-fat coconut milk","½ cup red onion, sliced","½ cup cubanelle or red bell pepper, sliced","1 tsp minced garlic","½ cup tomato sauce","½ tsp powdered annatto (for color)","1½ tsp dried oregano","1–2 tbsp fresh cilantro, chopped","Juice of ½ lime","Salt and pepper","1 lb yuca, peeled and cut into chunks","Oil for frying yuca"],steps:["Season lobster with lime juice, ½ tsp oregano, salt and pepper.","Combine coconut milk, onion, pepper, garlic, tomato sauce in a wide skillet. Add remaining oregano, annatto, salt and pepper. Bring to boil.","Reduce to simmer. Cook 10 min until sauce thickens slightly.","Add lobster in a single layer. Simmer 8–10 min, spooning sauce over top. Do not stir — keep lobster intact.","Boil yuca chunks in salted water until just tender. Drain and pat dry. Fry in 350°F oil until golden and crispy. Season with salt.","Plate bisque. Garnish with cilantro. Serve with fried yuca."],note:"Inspired by Rosa's at Park in The Bronx — a dish that never made their official menu but was completely unforgettable. A personal recreation built on a Creole coconut sauce base. The coconut-tomato sauce is Dominican; the lobster and fried yuca make it a celebration."},
+{id:"r17",name:"Mahi Mahi with Caramelized Mango & Pico",cat:"nyc",time:"medium",ingredients:["5 mahi mahi fillets","1 large ripe mango, chopped into chunks","1 tbsp sugar","3 tbsp water","Pico de gallo: 2 Roma tomatoes diced, ¼ onion diced, cilantro, juice of 1 lime, jalapeño, salt","Garlic powder, salt, pepper","2 tbsp olive oil"],steps:["Season mahi with garlic powder, salt, and pepper.","Sear in hot olive oil 3–4 min per side until golden. Remove and rest.","In same pan: add sugar and water, stir. Add mango chunks.","Cook 3–4 min on medium — mango softens and edges caramelize into a light glossy sauce. Not mushy, just kissed by heat.","Spoon warm caramelized mango over fish.","Top with fresh pico de gallo — the acid cuts through the sweetness perfectly.","Serve over coconut rice."],note:"Inspired by a restaurant in Isla Verde, Puerto Rico. The mango is lightly caramelized — sugar and water create a subtle glaze rather than a heavy sauce. The pico de gallo on top is what makes it: cool, fresh, acidic against the warm sweet mango."},
+{id:"r18",name:"Vibes Mango Salmon — Queens",cat:"nyc",time:"medium",ingredients:["5 salmon fillets","1 large ripe mango, diced","1 tbsp butter","1 tbsp brown sugar","Juice of 1 lime","1 tsp ginger, minced","Garlic powder, salt, pepper","5 large potatoes","Butter, warm milk, salt, pepper for mash"],steps:["Season salmon with garlic powder, salt, pepper.","Sear in hot oil 4–5 min per side until golden. Remove and rest.","Melt butter in same pan. Add mango, brown sugar, lime, ginger. Cook 3–4 min until warm and jammy.","Boil potatoes until very tender. Mash with butter, warm milk, salt, pepper until smooth and fluffy.","Plate mash, top with salmon, spoon mango sauce over everything."],note:"Inspired by Vibes restaurant in Queens, NY — their mango salmon with mashed potatoes. One of those dishes that stays with you. The mango here is warm and saucy rather than caramelized — different technique from the Isla Verde version, same beautiful instinct."},
+{id:"r19",name:"Turkey Wings — Smothered",cat:"southern",time:"long",ingredients:["5 turkey wings, separated","1 onion, diced","1 green pepper, diced","3 garlic cloves, minced","2 cups chicken broth","1 can cream of mushroom soup","1 tsp each: garlic powder, onion powder, paprika","Salt, pepper, cayenne","2 tbsp oil"],steps:["Season wings generously. Brown on all sides in hot oil. Remove.","Sauté onion, pepper, garlic. Add broth and cream of mushroom soup. Whisk smooth.","Return wings. Cover and braise on low 1.5–2 hours until fall-off-the-bone.","Serve over white rice with gravy spooned over everything."]},
+{id:"r20",name:"Turkey Wings — Baked",cat:"southern",time:"long",ingredients:["5 turkey wings","2 tbsp olive oil","1 tbsp each: garlic powder, onion powder","1 tsp each: paprika, thyme","Salt and pepper","1 cup chicken broth"],steps:["Preheat oven to 375°F. Coat wings in oil and all spices.","Place in baking dish with broth in the bottom. Cover tightly with foil.","Bake covered 1.5 hours. Uncover and bake 30 more min until golden and crispy."]},
+{id:"r21",name:"BBQ Chicken",cat:"southern",time:"long",ingredients:["5 chicken thighs and legs","1 cup BBQ sauce","2 tbsp apple cider vinegar","1 tbsp brown sugar","1 tsp garlic powder","1 tsp smoked paprika","Salt and pepper"],steps:["Season chicken with dry spices.","Grill or bake at 400°F 35–40 min.","Mix BBQ sauce with vinegar and brown sugar. Brush generously in last 10 min.","Rest 5 min before serving."]},
+{id:"r22",name:"Chicken & Waffles",cat:"southern",time:"long",ingredients:["5 chicken thighs, boneless","1 cup buttermilk","1 cup flour","½ cup cornstarch","1 tsp each: garlic powder, paprika, cayenne, salt","Oil for frying","Waffle batter (your favorite)","Maple syrup and hot sauce to serve"],steps:["Marinate chicken in buttermilk 2 hours or overnight.","Mix flour, cornstarch, and all spices. Coat chicken firmly.","Fry in 350°F oil 6–8 min per side until deep golden. Drain.","Make waffles. Serve chicken on waffles with maple syrup and hot sauce."],note:"Inspired by Sweet Chick NYC. For their vegetarian version, use your favorite plant-based chicken — the crust works just as well."},
+{id:"r23",name:"Jollof Rice",cat:"westaf",time:"long",ingredients:["3 cups parboiled long grain rice","1 can tomato paste","1 can crushed tomatoes","1 red bell pepper","1 scotch bonnet (optional)","1 onion","4 garlic cloves","1 cup chicken broth","2 tsp curry powder","1 tsp each: thyme, smoked paprika","2 bay leaves","Salt, bouillon, 3 tbsp oil"],steps:["Blend tomatoes, red pepper, half the onion, scotch bonnet, garlic until smooth.","Fry tomato paste in oil 2 min. Add blended mix. Cook down 20–25 min until darkened and oil rises.","Add broth, spices, bay leaves, diced onion. Season generously. Bring to boil.","Add washed rice. Stir once. Cover tightly with foil under lid. Cook 30–35 min on very low.","Stir from bottom — the slightly charred bottom is the prize. Adjust seasoning."],note:"Jollof Rice is West African at its core — a one-pot rice dish debated passionately between Nigeria, Ghana, Senegal, and beyond. Every family has their version and everyone believes theirs is the best."},
+{id:"r24",name:"Chicken Suya",cat:"westaf",time:"medium",ingredients:["5 chicken breasts, sliced thin","3 tbsp suya spice mix","2 tbsp peanut butter","2 tbsp groundnut oil","1 tsp each: garlic powder, ground ginger","Salt to taste"],steps:["Mix suya spice, peanut butter, oil, garlic, ginger into paste.","Coat chicken, thread on skewers. Marinate 1 hour.","Grill or broil high heat 4–5 min per side until charred.","Serve with raw sliced onion, tomatoes, extra suya spice."],note:"Suya is a West African street food staple — spiced skewered meat sold by roadside vendors across Nigeria. The peanut-based spice rub is everything. Suya spice mix is available at most African grocery stores."},
+{id:"r25",name:"Chicken Salteado",cat:"asian",time:"medium",ingredients:["5 chicken breasts, sliced thin","2 bell peppers, sliced","1 large onion, sliced","3 garlic cloves, minced","1 tsp ginger, grated","3 tbsp soy sauce","1 tbsp oyster sauce","1 tbsp sesame oil","Salt and pepper","Green onions to garnish"],steps:["Season chicken with salt, pepper, splash of soy sauce.","Heat wok on very high. Stir-fry chicken in batches until golden. Remove.","Cook onion and peppers high heat 3–4 min. Add garlic and ginger, 1 min.","Return chicken. Add soy sauce, oyster sauce, sesame oil. Toss on high 2 min.","Garnish with green onions."],note:"Salteado means stir-fried. This technique came to Latin America through Chinese immigration in the 19th century. High heat is everything here — the wok should be smoking."},
+{id:"r26",name:"Tuna Steak with Sesame",cat:"asian",time:"quick",ingredients:["5 tuna steaks (1 inch thick)","3 tbsp soy sauce","1 tbsp sesame oil","1 tsp fresh ginger, grated","1 garlic clove, minced","1 tbsp sesame seeds","2 tbsp olive oil"],steps:["Mix soy sauce, sesame oil, ginger, garlic. Marinate tuna 15–20 min only.","Heat skillet on very high until smoking.","Sear 1.5–2 min per side for medium-rare (pink inside).","Press sesame seeds on top. Serve with chimichurri or ponzu."]},
+{id:"r27",name:"Orange Chicken",cat:"asian",time:"medium",ingredients:["5 chicken breasts, cubed","½ cup cornstarch","2 eggs, beaten","Oil for frying","Zest and juice of 2 oranges","3 tbsp soy sauce","2 tbsp rice vinegar","2 tbsp sugar","1 tbsp hoisin","3 garlic cloves, minced","1 tsp ginger","1 tbsp cornstarch + 2 tbsp water"],steps:["Coat chicken in egg then cornstarch. Fry in batches in 350°F oil until golden. Drain.","Combine orange juice, zest, soy sauce, vinegar, sugar, hoisin, garlic, ginger in saucepan. Simmer.","Add cornstarch slurry. Cook 2 min until glossy.","Toss fried chicken in sauce. Serve over rice immediately."]},
+{id:"r28",name:"Thai Fried Rice",cat:"asian",time:"quick",ingredients:["3 cups cooked jasmine rice (day-old)","2 chicken breasts, diced small","3 eggs","3 garlic cloves, minced","1 onion, diced","2 tbsp fish sauce","1 tbsp soy sauce","1 tbsp oyster sauce","1 tsp sugar","White pepper","Thai basil","2 tbsp oil","Lime wedges"],steps:["Heat wok very high. Add oil, sauté garlic and onion 1 min.","Add chicken, cook through. Push to side. Scramble eggs in same pan.","Add cold rice, break up clumps. Toss everything on high heat.","Season with fish sauce, soy sauce, oyster sauce, sugar, white pepper.","Add Thai basil, toss 30 sec. Serve with lime."],note:"Day-old rice is essential — fresh rice steams instead of fries. High heat gives that smoky wok flavor."},
+{id:"r29",name:"Teriyaki Chicken",cat:"asian",time:"medium",ingredients:["5 chicken thighs, boneless","¼ cup soy sauce","¼ cup mirin","2 tbsp sake or dry sherry","2 tbsp sugar","1 tsp ginger","2 garlic cloves, minced","1 tbsp oil","Sesame seeds, green onions"],steps:["Mix soy, mirin, sake, sugar, ginger, garlic. Marinate chicken 30 min.","Cook skin-side down 5 min until crispy. Flip, cook 4 more min.","Pour sauce over. Simmer, spooning sauce over chicken until glazed and caramelized.","Slice and serve over rice with sesame seeds and green onions."]},
+{id:"r30",name:"Japanese BBQ Chicken (Yakiniku Style)",cat:"asian",time:"medium",ingredients:["5 chicken thighs","3 tbsp yakiniku (Japanese BBQ) sauce","2 tbsp soy sauce","1 tbsp mirin","1 tbsp sesame oil","2 garlic cloves, minced","1 tsp ginger","Sesame seeds"],steps:["Combine all marinade. Coat chicken and marinate 1 hour.","Grill or pan-sear medium-high 5–6 min per side until charred.","Baste with extra sauce last 2 min. Serve with Japanese rice and pickled veg."]},
+{id:"r31",name:"Empanadas / Pastelitos de Pollo",cat:"street",time:"long",ingredients:["Empanada discs (store-bought)","2 chicken breasts, cooked and shredded","1 onion, finely diced","1 green pepper, finely diced","2 garlic cloves, minced","2 tbsp tomato paste","1 tsp cumin","1 tsp Sazón","Salt and pepper","Oil for frying"],steps:["Season and shred chicken. Sauté onion, pepper, garlic. Add tomato paste, chicken, spices. Cook 5 min. Cool completely.","Place filling in center of each disc. Do not overfill. Fold and seal firmly with fork.","Fry in 350°F oil 3–4 min per side until golden. Drain on paper towels."],note:"Called Empanadas across Latin America, Pastelitos in the DR. Same concept — savory filling wrapped in dough and fried until golden. A staple at every Caribbean gathering."},
+{id:"r32",name:"Chicken Kabobs",cat:"street",time:"medium",ingredients:["5 chicken breasts, cubed","1 red + 1 green pepper, cubed","1 red onion, cubed","3 tbsp olive oil","3 garlic cloves, minced","1 tsp each: cumin, paprika, oregano","Juice of 1 lemon","Salt and pepper"],steps:["Mix oil, garlic, spices, lemon. Toss chicken and veg. Marinate 30 min.","Thread onto skewers alternating chicken and veg.","Grill or broil high heat 4–5 min per side until cooked through with charred edges.","Serve with chimichurri sauce."]},
+{id:"r33",name:"Wonton Chicken Tacos",cat:"street",time:"medium",ingredients:["2 lbs ground chicken","Wonton wrappers","1 tbsp sesame oil","2 tbsp soy sauce","1 tsp ginger","2 garlic cloves, minced","1 tbsp hoisin","Coleslaw mix","Sriracha mayo","Oil for frying"],steps:["Brown chicken with garlic and ginger. Season with soy sauce, hoisin, sesame oil.","Fold wontons into taco shape. Fry in 350°F oil until golden and crispy.","Fill with chicken. Top with coleslaw and sriracha mayo."]},
+{id:"r34",name:"Brooklyn Salmon Burger",cat:"street",time:"medium",ingredients:["1.5 lbs fresh salmon, finely chopped or ground","1 egg, beaten","1 tbsp Dijon mustard","1 tbsp fresh lemon juice","2 garlic cloves, minced","Salt, pepper, dried dill","¼ cup biscuit mix (Bisquick) for light dusting","Oil for pan-frying","Brioche buns, lettuce, tomato, remoulade sauce"],steps:["Mix salmon with egg, mustard, lemon, garlic, dill, salt, pepper. Form into patties.","Dust very lightly with biscuit mix — just a thin coat on the outside.","Pan-fry over medium heat 3–4 min per side until light golden. Handle gently.","Serve on brioche bun with lettuce, tomato, and remoulade."],note:"Inspired by a salmon burger in Brooklyn — lightly crusted in what tasted like biscuit mix. Delicate, not heavy. The biscuit coating gives a subtle buttery quality that breadcrumbs can't."},
+{id:"r35",name:"Tuna Tartare",cat:"street",time:"quick",ingredients:["1 lb sushi-grade tuna, finely diced","2 tbsp soy sauce","1 tbsp sesame oil","1 tsp sriracha","1 tbsp rice vinegar","1 tsp ginger, minced","1 avocado, diced","2 green onions, sliced thin","Sesame seeds","Wonton crisps or cucumber rounds"],steps:["Dice tuna into small even cubes. Keep cold until plating.","Mix soy sauce, sesame oil, sriracha, vinegar, ginger.","Gently fold dressing into tuna. Add green onions.","Plate over or alongside diced avocado. Top with sesame seeds.","Serve immediately with wonton crisps or cucumber."],note:"Always use sushi-grade tuna. Keep everything cold until the moment you plate it."},
+{id:"r36",name:"Chimichurri Sauce",cat:"sides",time:"quick",ingredients:["1 cup flat-leaf parsley, packed","4 garlic cloves","½ cup olive oil","3 tbsp red wine vinegar","1 tsp dried oregano","½ tsp red pepper flakes","Salt and pepper"],steps:["Finely chop parsley and garlic — keep some texture, don't over-process.","Mix with olive oil, vinegar, oregano, red pepper flakes.","Season and let sit 15 min before serving.","Stores in fridge up to 1 week."]},
+{id:"r37",name:"Avocado Salad",cat:"sides",time:"quick",ingredients:["3 ripe avocados","1 Roma tomato, diced","¼ red onion, finely diced","Juice of 1–2 limes","Fresh cilantro","Salt and pepper"],steps:["Scoop avocado into bowl. Add tomato, onion, cilantro.","Season with lime, salt, pepper. Mix gently — keep it chunky.","Serve immediately."]},
+{id:"r38",name:"Long Pasta with Garlic & Chicken",cat:"sides",time:"medium",ingredients:["1 lb spaghetti or linguine","3 chicken breasts, sliced thin","6 garlic cloves, minced","¼ cup olive oil","Red pepper flakes","Fresh parsley","Salt and pepper","Parmesan to serve"],steps:["Cook pasta in heavily salted water. Reserve 1 cup pasta water.","Season chicken and cook in olive oil until golden. Remove.","Cook garlic in same pan over medium-low until golden — do not burn.","Add red pepper flakes, pasta, ½ cup pasta water. Toss.","Return chicken and parsley. Toss together. Serve with parmesan."]},
+{id:"r39",name:"Dominican Breakfast — Los Tres Golpes",cat:"breakfast",time:"medium",ingredients:["Mangú (see Mangú recipe)","2 fried eggs per person","1 avocado, sliced","Sautéed pickled red onions","Fresh orange juice or coffee"],steps:["Prepare mangú per that recipe.","Fry eggs to your preference — sunny side up is traditional.","Plate mangú alongside eggs and sliced avocado. Spoon pickled onions over mangú.","Serve with fresh OJ or black coffee."],note:"Los Tres Golpes means The Three Hits — mangú, fried eggs, and salami is the traditional trio. We skip the salami here. This is the Dominican Sunday morning."},
+{id:"r40",name:"Kids: Chicken & Rice Bowl",cat:"kids",time:"medium",ingredients:["2 cups cooked white rice","2 chicken breasts, diced small","1 tbsp butter","1 tsp garlic powder","Salt to taste","Steamed broccoli or corn","Mild shredded cheddar"],steps:["Season and cook diced chicken in butter until golden.","Serve over white rice with steamed vegetables and a sprinkle of cheese."]},
+{id:"r41",name:"Kids: Fruit & Yogurt Parfait",cat:"kids",time:"quick",ingredients:["Greek yogurt","Fresh strawberries and blueberries","1 banana, sliced","Honey drizzle","Granola (optional)"],steps:["Layer yogurt in bowl. Top with fruit. Drizzle honey. Add granola if using. Serve immediately."]},
+{id:"r42",name:"Blazin Bronx — Crispy Chicken Over Rice",cat:"nyc",time:"long",ingredients:["5 chicken thighs, boneless","1 cup buttermilk","1 cup flour","½ cup cornstarch","1 tsp each: garlic powder, onion powder, paprika, cayenne","Salt and pepper","Oil for frying","Cooked white rice","Shredded lettuce and sliced tomato","Blazin Sauce: hot sauce, butter, brown sugar, minced garlic, cayenne — simmer until glossy"],steps:["Marinate chicken in buttermilk at least 2 hours.","Mix flour, cornstarch, and spices. Coat chicken firmly.","Fry in 350°F oil 6–8 min per side until deeply golden. Drain.","Simmer Blazin Sauce ingredients together until glossy.","Serve crispy chicken over rice with lettuce and tomato. Pour Blazin Sauce over everything."],note:"Inspired by Blazin in The Bronx. Adjust the heat on the sauce to your level. They offer multiple sauce varieties — experiment and make it your own."},
+{id:"r43",name:"The Edge Harlem — Sweet & Spicy Jerk Salmon",cat:"nyc",time:"medium",ingredients:["5 salmon fillets","3 tbsp jerk seasoning","2 tbsp honey","1 tbsp soy sauce","1 tbsp brown sugar","Juice of 1 lime","1 scotch bonnet or habanero, minced to taste","Fresh thyme","1 tbsp olive oil"],steps:["Combine jerk seasoning, honey, soy sauce, brown sugar, lime, scotch bonnet, thyme.","Coat salmon and marinate 30 min minimum.","Cook in hot skillet or on grill 4–5 min per side. The sugars caramelize — watch carefully.","It should be sweet first, then the heat builds. That's the balance."],note:"Inspired by The Edge Harlem — their jerk salmon nails that sweet-spicy balance that most jerk dishes miss. The honey is the secret. A gem of a Harlem spot."},
+{id:"r44",name:"Halal Guys — Chicken & Rice",cat:"nyc",time:"medium",ingredients:["5 chicken thighs","2 tbsp olive oil","1 tsp each: cumin, coriander, paprika, turmeric, garlic powder","Salt, pepper, cayenne","Long grain rice cooked in chicken broth with butter","Iceberg lettuce, sliced tomato, pita","White sauce: ½ cup mayo, ¼ cup Greek yogurt, 1 tbsp white vinegar, 1 tsp sugar, garlic powder, salt","Hot sauce: hot sauce mixed with harissa"],steps:["Mix spices and oil into paste. Coat chicken and marinate 1 hour.","Cook chicken in hot skillet until cooked through and slightly charred. Chop.","Cook rice in chicken broth with butter.","White sauce: blend mayo, yogurt, vinegar, sugar, garlic powder until smooth. Refrigerate.","Serve rice and chicken with lettuce, tomato, pita. Drizzle white sauce generously. Add hot sauce."],note:"The Halal Guys started as an NYC street cart and became a global institution. That white sauce is iconic — make it ahead so the flavors meld. The key is being generous with it."},
+{id:"r45",name:"Carbone-Inspired Spicy Rigatoni",cat:"nyc",time:"medium",ingredients:["1 lb rigatoni","4 tbsp butter","1 small onion, very finely diced","6 garlic cloves, minced","1–2 tsp red pepper flakes","1 can crushed San Marzano tomatoes","½ cup heavy cream","½ cup pasta water","½ cup freshly grated parmesan","Salt"],steps:["Cook rigatoni al dente. Reserve 1 cup pasta water.","Melt butter. Cook onion very slowly 8–10 min until completely soft and sweet.","Add garlic and red pepper flakes. Cook 2 min — butter turns orange from the chili.","Add tomatoes. Cook 15 min until sauce deepens.","Add cream. Simmer 5 min.","Add rigatoni and pasta water. Toss until every tube is coated. Finish with parmesan."],note:"Inspired by Carbone NYC — arguably the most ordered dish in Manhattan. The secret is slow-cooking the onion all the way down and letting the chili bloom in butter before the tomatoes go in."},
+{id:"r46",name:"Lobster Mac & Cheese",cat:"nyc",time:"long",ingredients:["1 lb cavatappi or elbow pasta","1 lb lobster chunks","4 tbsp butter","4 tbsp flour","3 cups whole milk","1 cup heavy cream","2 cups sharp cheddar, shredded","1 cup gruyère, shredded","½ cup parmesan","1 tsp garlic powder","1 tsp smoked paprika","Salt and white pepper","Seasoned breadcrumbs for topping"],steps:["Cook pasta just under al dente.","Make roux: melt butter, whisk in flour, cook 2 min.","Gradually whisk in milk and cream until thick and smooth.","Add cheese gradually off heat. Season.","Fold in pasta and lobster. Transfer to baking dish.","Top with buttered breadcrumbs. Bake 375°F 20–25 min until golden and bubbling."]},
+{id:"r47",name:"Red Velvet Waffles — Harlem Style",cat:"nyc",time:"medium",ingredients:["2 cups flour","2 tbsp cocoa powder","2 tbsp red food coloring","1 tbsp sugar","1 tsp baking powder","½ tsp baking soda","½ tsp salt","2 eggs","1¾ cups buttermilk","⅓ cup vegetable oil","1 tsp vanilla","1 tsp white vinegar","Cream cheese glaze: 4oz softened cream cheese, 1 cup powdered sugar, 3–4 tbsp milk, ½ tsp vanilla"],steps:["Whisk all dry ingredients together.","In another bowl, whisk eggs, buttermilk, oil, vanilla, vinegar, food coloring.","Pour wet into dry. Stir until just combined — a few lumps are fine.","Cook in preheated greased waffle iron.","Cream cheese glaze: beat cream cheese smooth, whisk in sugar, milk, vanilla until pourable.","Pour warm glaze over hot waffles. Serve with fried chicken."],note:"Inspired by a classic Harlem waffle spot. The cream cheese glaze is non-negotiable — it turns a good waffle into a destination dish."},
+{id:"r48",name:"Dominican Sushi",cat:"nyc",time:"long",ingredients:["2 cups sushi rice","3 tbsp rice vinegar","2 tbsp sugar","1 tsp salt","Nori sheets","Cooked shrimp or salmon","Avocado, sliced","Mango, sliced thin","Cream cheese","Tostones (thin and crispy) for the Dominican base","Sriracha mayo","Soy sauce to serve"],steps:["Cook sushi rice. Fold in vinegar, sugar, salt while warm. Fan until glossy. Cool to room temp.","Lay nori on mat. Spread thin rice layer. Add cream cheese, avocado, mango, protein.","Roll tightly. Slice with wet knife.","Dominican version: use a thin crispy tostón as base. Top each with a spoonful of rice, avocado slice, and salmon or shrimp. Drizzle with sriracha mayo.","Serve with soy sauce."],note:"Dominican Sushi is exactly what it sounds like — Caribbean flavors brought into the sushi format. Plantain as base, mango inside, sriracha mayo on top. NYC born, island inspired."},
+{id:"r49",name:"Chelsea Shawarma Chicken",cat:"nyc",time:"long",ingredients:["5 chicken thighs","3 tbsp olive oil","Juice of 1 lemon","4 garlic cloves, minced","2 tsp cumin","2 tsp coriander","1 tsp each: turmeric, smoked paprika","½ tsp cinnamon","Salt and pepper","Warm pita bread","Toum (garlic sauce): blend garlic, oil, lemon, salt into creamy white sauce","Pickled turnips, tomatoes, cucumbers to serve"],steps:["Mix olive oil, lemon, garlic, and all spices. Coat chicken. Marinate overnight — this is essential.","Roast at 425°F 30–35 min or grill until cooked through and charred in spots.","Slice thin against the grain.","Serve in warm pita with toum, pickled turnips, tomatoes, and cucumbers."],note:"Real shawarma gets its depth from the overnight marinade. The toum (garlic sauce) is the soul of the dish — worth making from scratch."},
+{id:"r50",name:"Rock Shrimp Tempura — Catch Style",cat:"nyc",time:"medium",ingredients:["1.5 lbs rock shrimp, peeled","1 cup tempura batter mix","Ice cold water","Oil for deep frying","Spicy mayo: ½ cup mayo + 2 tbsp sriracha + juice of ½ lime + garlic powder","Sweet soy glaze: 3 tbsp soy sauce + 2 tbsp honey + 1 tsp sesame oil + ½ tsp ginger — simmer 2 min"],steps:["Mix tempura batter with just enough ice cold water for a thin batter. Lumpy is fine.","Coat rock shrimp in batter.","Fry in 375°F oil 2–3 min until light golden and crispy. Do not overcook.","Drain immediately on paper towels.","Serve tossed in spicy mayo or drizzled with sweet soy glaze — or offer both."],note:"Inspired by Catch NYC. The key is keeping the oil hot and not overcrowding so the batter stays crispy."}
+];
+
+function all(){return[...RECIPES,...custom];}
+function weekStart(off){const n=new Date(),d=n.getDay(),s=new Date(n.setDate(n.getDate()-d+(off*7)));s.setHours(0,0,0,0);return s;}
+function weekKey(off){return weekStart(off).toISOString().split("T")[0];}
+function weekLabel(off){const s=weekStart(off),e=new Date(s);e.setDate(e.getDate()+6);const f=d=>d.toLocaleDateString("en-US",{month:"short",day:"numeric"});return f(s)+" – "+f(e);}
+
+function buildPlanner(){
+  const grid=document.getElementById("planner-grid");
+  document.getElementById("week-label").textContent=weekLabel(weekOffset);
+  const wk=weekKey(weekOffset),ws=weekStart(weekOffset);
+  grid.innerHTML="";
+  const corner=document.createElement("div");corner.className="cell cell-head";grid.appendChild(corner);
+  DAYS.forEach((d,i)=>{const dt=new Date(ws);dt.setDate(dt.getDate()+i);const el=document.createElement("div");el.className="cell cell-head";el.innerHTML="<div class=\"day-name\">"+d+"</div><div class=\"day-date\">"+(dt.getMonth()+1)+"/"+dt.getDate()+"</div>";grid.appendChild(el);});
+  MEALS.forEach(meal=>{
+    const lbl=document.createElement("div");lbl.className="cell meal-row-label";lbl.textContent=meal.charAt(0).toUpperCase()+meal.slice(1);grid.appendChild(lbl);
+    DAYS.forEach((_,di)=>{
+      const key=wk+"-"+di+"-"+meal,cell=document.createElement("div");cell.className="cell meal-cell";
+      const rid=plan[key];
+      if(rid){const r=all().find(x=>x.id===rid);if(r){const tag=document.createElement("div");tag.className="meal-tag tag-"+r.cat;tag.innerHTML=r.name+(r.cat==="nyc"?"<span class=\"nyc-badge\">NYC</span>":"")+"<div class=\"remove-tag\" onclick=\"removeMeal('"+key+"',event)\">✕</div>";tag.onclick=e=>{if(!e.target.classList.contains("remove-tag")&&!e.target.closest(".remove-tag"))openDetail(r.id);};cell.appendChild(tag);}}
+      const add=document.createElement("button");add.className="add-btn";add.textContent="+";add.onclick=()=>openAssign(key,DAYS[di],meal);cell.appendChild(add);
+      grid.appendChild(cell);
+    });
+  });
+}
+function changeWeek(d){weekOffset+=d;buildPlanner();}
+function removeMeal(key,e){e.stopPropagation();delete plan[key];localStorage.setItem("sk3-plan",JSON.stringify(plan));buildPlanner();}
+
+function openAssign(slot,day,meal){
+  assignSlot=slot;assignCat="";
+  document.getElementById("slot-info").innerHTML="Adding to: <strong>"+day+" — "+meal+"</strong>";
+  document.getElementById("asrch").value="";
+  const af=document.getElementById("afilters");
+  af.innerHTML="<button class=\"af-btn active\" onclick=\"setACat(\'\',this)\">All</button>";
+  Object.entries(CATS).forEach(([k,v])=>{af.innerHTML+="<button class=\"af-btn\" onclick=\"setACat(\'"+k+"\',this)\">"+v+"</button>";});
+  renderAssignList();document.getElementById("assign-overlay").classList.add("open");
+}
+function setACat(cat,btn){assignCat=cat;document.querySelectorAll(".af-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderAssignList();}
+function renderAssignList(){
+  const s=document.getElementById("asrch").value.toLowerCase(),list=document.getElementById("alist");
+  const filtered=all().filter(r=>(!assignCat||r.cat===assignCat)&&(!s||r.name.toLowerCase().includes(s)));
+  list.innerHTML=filtered.map(r=>"<div class=\"assign-item\"><div><div class=\"assign-name\">"+r.name+(r.cat==="nyc"?"<span class=\"nyc-badge\">NYC</span>":"")+"</div><div class=\"assign-sub\">"+CATS[r.cat]+" · "+(r.time==="quick"?"<30 min":r.time==="medium"?"30–60 min":"60+ min")+"</div></div><button class=\"assign-add\" onclick=\"doAssign(\'"+r.id+"\')\">Add</button></div>").join("");
+  if(!filtered.length)list.innerHTML="<div style=\"padding:20px;color:var(--text-dim);text-align:center;font-size:0.82rem;\">No recipes found</div>";
+}
+function doAssign(rid){plan[assignSlot]=rid;localStorage.setItem("sk3-plan",JSON.stringify(plan));closeAssign();buildPlanner();}
+function closeAssign(){document.getElementById("assign-overlay").classList.remove("open");assignSlot=null;}
+
+function openDetail(rid){
+  const r=all().find(x=>x.id===rid);if(!r)return;
+  document.getElementById("detail-title").innerHTML="<span class=\"cat-badge badge-"+r.cat+"\">"+CATS[r.cat]+"</span><br>"+r.name;
+  document.getElementById("detail-body").innerHTML="<div style=\"font-size:0.75rem;color:var(--text-dim);margin-bottom:18px;\">⏱ "+(r.time==="quick"?"Under 30 min":r.time==="medium"?"30–60 min":"60+ min")+" · 👨‍👩‍👧‍👦 Serves 5</div><div class=\"detail-ing\"><h4>Ingredients</h4><ul class=\"ing-list\">"+r.ingredients.map(i=>"<li>"+i+"</li>").join("")+"</ul></div><div class=\"detail-steps\" style=\"margin-top:20px;\"><h4>Instructions</h4><ol class=\"steps-list\">"+r.steps.map(s=>"<li>"+s+"</li>").join("")+"</ol></div>"+(r.note?"<div class=\"recipe-note\">"+r.note+"</div>":"");
+  document.getElementById("detail-overlay").classList.add("open");
+}
+function closeDetail(){document.getElementById("detail-overlay").classList.remove("open");}
+
+function filterRecipes(){
+  const s=document.getElementById("rsearch").value.toLowerCase(),cat=document.getElementById("rcat").value,time=document.getElementById("rtime").value;
+  const filtered=all().filter(r=>{const ms=!s||r.name.toLowerCase().includes(s)||r.ingredients.some(i=>i.toLowerCase().includes(s));return ms&&(!cat||r.cat===cat)&&(!time||r.time===time);});
+  const isCustom=r=>!RECIPES.find(p=>p.id===r.id);
+  document.getElementById("recipes-grid").innerHTML=filtered.map(r=>"<div class=\"recipe-card\" onclick=\"openDetail(\'"+r.id+"\')\"><div class=\"cat-badge badge-"+r.cat+"\">"+CATS[r.cat]+"</div><div class=\"card-name\">"+r.name+(r.cat==="nyc"?"<span class=\"nyc-badge\">NYC</span>":"")+"</div><div class=\"card-meta\"><span>⏱ "+(r.time==="quick"?"<30m":r.time==="medium"?"30–60m":"60m+")+"</span><span>👥 Serves 5</span></div><div class=\"card-actions\" onclick=\"event.stopPropagation()\"><button class=\"card-edit-btn\" onclick=\"openEdit(\'"+r.id+"\')\">✏️ Edit</button><button class=\"card-del-btn\" onclick=\"deleteRecipe(\'"+r.id+"\',event)\">🗑 "+(isCustom(r)?"Delete":"Remove")+"</button></div></div>").join("");
+  if(!filtered.length)document.getElementById("recipes-grid").innerHTML="<div style=\"color:var(--text-dim);grid-column:1/-1;text-align:center;padding:40px;\">No recipes found</div>";
+}
+
+function openAdd(){editingId=null;document.getElementById("add-title").textContent="✨ Add New Recipe";document.getElementById("add-save-btn").textContent="Save Recipe";["nn","ni","ns","nnote"].forEach(id=>document.getElementById(id).value="");document.getElementById("add-overlay").classList.add("open");}
+function openEdit(rid){
+  const r=all().find(x=>x.id===rid);if(!r)return;
+  editingId=rid;document.getElementById("add-title").textContent="✏️ Edit Recipe";document.getElementById("add-save-btn").textContent="Update Recipe";
+  document.getElementById("nn").value=r.name;document.getElementById("nc").value=r.cat;document.getElementById("nt").value=r.time;
+  document.getElementById("ni").value=r.ingredients.join("\n");document.getElementById("ns").value=r.steps.join("\n");document.getElementById("nnote").value=r.note||"";
+  document.getElementById("add-overlay").classList.add("open");
+}
+function closeAdd(){document.getElementById("add-overlay").classList.remove("open");editingId=null;}
+function saveRecipe(){
+  const name=document.getElementById("nn").value.trim();if(!name){alert("Please enter a recipe name");return;}
+  const data={name,cat:document.getElementById("nc").value,time:document.getElementById("nt").value,ingredients:document.getElementById("ni").value.split("\n").map(l=>l.trim()).filter(Boolean),steps:document.getElementById("ns").value.split("\n").map(l=>l.trim()).filter(Boolean),note:document.getElementById("nnote").value.trim()};
+  if(editingId){const pi=RECIPES.findIndex(r=>r.id===editingId),ci=custom.findIndex(r=>r.id===editingId);if(pi>=0)Object.assign(RECIPES[pi],data);else if(ci>=0){Object.assign(custom[ci],data);localStorage.setItem("sk3-custom",JSON.stringify(custom));}}
+  else{custom.push({id:"c"+Date.now(),...data});localStorage.setItem("sk3-custom",JSON.stringify(custom));}
+  closeAdd();filterRecipes();
+}
+function deleteRecipe(rid,e){
+  e.stopPropagation();if(!confirm("Remove this recipe?"))return;
+  const ci=custom.findIndex(r=>r.id===rid);
+  if(ci>=0){custom.splice(ci,1);localStorage.setItem("sk3-custom",JSON.stringify(custom));}
+  else{let hidden=JSON.parse(localStorage.getItem("sk3-hidden")||"[]");hidden.push(rid);localStorage.setItem("sk3-hidden",JSON.stringify(hidden));}
+  filterRecipes();
+}
+
+function genShopping(){
+  const wk=weekKey(weekOffset),ids=new Set(Object.entries(plan).filter(([k])=>k.startsWith(wk)).map(([,v])=>v));
+  if(!ids.size){document.getElementById("shop-content").innerHTML="<div class=\"empty-state\"><div class=\"emoji\">📅</div><p>No meals planned this week</p><span>Add meals to your planner first</span></div>";return;}
+  const recipes=all().filter(r=>ids.has(r.id)),ings=recipes.flatMap(r=>r.ingredients);
+  const cats={"🥦 Produce & Fresh":[],"🍗 Proteins":[],"🥫 Pantry & Cans":[],"🧀 Dairy":[],"🫙 Sauces & Seasonings":[],"🛒 Other":[]};
+  const pw=["plantain","avocado","onion","pepper","garlic","tomato","parsley","cilantro","lime","lemon","banana","mango","broccoli","ginger","thyme","basil","lettuce","cucumber","jalapeño","green onion","callaloo","ackee","scotch bonnet","yuca","cassava"];
+  const pro=["chicken","salmon","tuna","turkey","lobster","shrimp","mahi","fish","cod","bacalao","saltfish","egg","ground"];
+  const dry=["rice","pasta","flour","cornstarch","wonton","empanada","can ","canned","broth","batter","breadcrumb","biscuit","nori","pita"];
+  const dairy=["butter","cheese","yogurt","milk","cream","parmesan","gruyère","cream cheese"];
+  const sauce=["soy sauce","sofrito","sazón","adobo","jerk","bbq","hoisin","sesame oil","olive oil","vinegar","tomato sauce","tomato paste","seasoning","spice","salt","pepper","cumin","paprika","oregano","sugar","honey","sauce","sriracha","mayo","mustard","annatto"];
+  ings.forEach(ing=>{const l=ing.toLowerCase();if(pro.some(w=>l.includes(w)))cats["🍗 Proteins"].push(ing);else if(pw.some(w=>l.includes(w)))cats["🥦 Produce & Fresh"].push(ing);else if(dairy.some(w=>l.includes(w)))cats["🧀 Dairy"].push(ing);else if(sauce.some(w=>l.includes(w)))cats["🫙 Sauces & Seasonings"].push(ing);else if(dry.some(w=>l.includes(w)))cats["🥫 Pantry & Cans"].push(ing);else cats["🛒 Other"].push(ing);});
+  Object.keys(cats).forEach(k=>{cats[k]=[...new Set(cats[k])];});
+  document.getElementById("shop-content").innerHTML="<div style=\"margin-bottom:16px;font-size:0.8rem;color:var(--text-mid);font-weight:600;\">Based on "+ids.size+" recipe"+(ids.size>1?"s":"")+" planned this week</div><div class=\"shop-cats\">"+Object.entries(cats).filter(([,v])=>v.length).map(([cat,items])=>"<div class=\"shop-cat\"><div class=\"shop-cat-title\">"+cat+"</div>"+items.map(item=>"<div class=\"shop-item\"><input type=\"checkbox\" onchange=\"this.closest(\'.shop-item\').classList.toggle(\'done\',this.checked)\"><span>"+item+"</span></div>").join("")+"</div>").join("")+"</div>";
+}
+
+function openSettings(){document.getElementById("settings-lock").style.display="block";document.getElementById("settings-panel").style.display="none";document.getElementById("spw").value="";document.getElementById("settings-overlay").classList.add("open");}
+function closeSettings(){document.getElementById("settings-overlay").classList.remove("open");}
+function checkPw(){const pw=document.getElementById("spw").value;if(pw===settings.pw){document.getElementById("settings-lock").style.display="none";document.getElementById("settings-panel").style.display="block";document.getElementById("s-brand").value=settings.brand||"Spice Kitchen";document.getElementById("s-tagline").value=settings.tagline||"New York City";}else{alert("Incorrect password");document.getElementById("spw").value="";}}
+function previewLogo(input){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const p=document.getElementById("s-logo-prev");p.src=e.target.result;p.style.display="block";};reader.readAsDataURL(file);}
+function saveSettings(){
+  const p1=document.getElementById("s-pw1").value,p2=document.getElementById("s-pw2").value;
+  if(p1&&p1!==p2){alert("Passwords do not match");return;}
+  settings.brand=document.getElementById("s-brand").value||"Spice Kitchen";
+  settings.tagline=document.getElementById("s-tagline").value||"New York City";
+  if(p1)settings.pw=p1;
+  const logoFile=document.getElementById("s-logo").files[0];
+  if(logoFile){const reader=new FileReader();reader.onload=e=>{settings.logo=e.target.result;finishSave();};reader.readAsDataURL(logoFile);}
+  else finishSave();
+}
+function finishSave(){applySettings();localStorage.setItem("sk3-settings",JSON.stringify(settings));closeSettings();}
+function applySettings(){document.getElementById("header-brand").textContent=settings.brand;document.getElementById("header-tagline").textContent=settings.tagline;if(settings.logo)document.getElementById("header-logo").src=settings.logo;document.title=settings.brand;}
+
+function showView(name,btn){document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));document.getElementById("view-"+name).classList.add("active");if(btn)btn.classList.add("active");if(name==="recipes")filterRecipes();if(name==="planner")buildPlanner();}
+
+applySettings();buildPlanner();filterRecipes();
+</script>
+</body>
+</html>
